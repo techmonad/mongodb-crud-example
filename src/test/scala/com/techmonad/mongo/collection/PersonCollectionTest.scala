@@ -1,50 +1,48 @@
 package com.techmonad.mongo.collection
 
 import com.techmonad.mongo.connection.ConnectionProvider
-import org.scalatest.FunSuite
+import com.techmonad.mongo.util.Person
+import org.scalatest.{Matchers, WordSpec}
+import reactivemongo.bson.BSONObjectID
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 
-class PersonCollectionTest extends FunSuite {
+class PersonCollectionTest extends WordSpec with Matchers {
 
   val personCollection = new PersonCollection with ConnectionProvider {
     override protected val collectionName: String = "person"
   }
 
-/*
-   test("create person") {
-      val result = personCollection.create(Person("Bob", 21))
-      await(result).ok === true
+  "person collection " should {
+
+    val id = BSONObjectID.generate()
+    "create person" in {
+      val result = personCollection.create(Person(id, "Bob", 21))
+      await(result).ok shouldBe true
+
     }
-*/
 
-/*  test("update person") {
-    val result = personCollection.update(Person("Bob joy", 21, Some("5bd48a240494719f3f5a854f")))
-    await(result).ok === true
-  }*/
+    "update person" in {
+      val result = personCollection.update(Person(id, "Bob joy", 21))
+      await(result).ok shouldBe true
+    }
 
-/*
+    "delete by id" in {
+      val result = personCollection.delete(id)
+      await(result).ok shouldBe true
+    }
 
-  test("delete by id"){
-    val result = personCollection.delete("5bd48a240494719f3f5a854f")
-    await(result).ok === true
+    " find  person by name" in {
+      val personFuture: Future[Person] = personCollection.findById(BSONObjectID.parse("5bd4980c0494719f3f5a8550").get)
+      val person: Person = await(personFuture)
+      person.name shouldBe "Bob"
+      person.age shouldBe 21
+    }
+
   }
-
-*/
-
-  test("find by name"){
-    val persons: Future[Person] = personCollection.find("Bob")
-    val d: Person = await(persons)
-    println(d)
-    "" ===  "1"
-    d === ""
-  }
-
-
 
   def await[T](future: Future[T]): T =
     Await.result(future, 10 seconds)
-
 
 }

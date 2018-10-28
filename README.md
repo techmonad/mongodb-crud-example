@@ -1,1 +1,1 @@
-# reactivemongo-driver-example
+# reactivemongo-example

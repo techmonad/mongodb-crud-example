@@ -1,4 +1,4 @@
-name := "reactivemongo-driver-example"
+name := "reactivemongo-example"
 
 version := "0.1"
 
